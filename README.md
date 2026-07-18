@@ -149,6 +149,32 @@ CLIENT_URL=https://your-service.onrender.com
 
 For this layout, leave `VITE_API_URL` empty or unset. The browser uses the same origin for both the website and API. The Render free Web Service may sleep after 15 minutes of inactivity, so the first request after idle can be slow.
 
+## Split deployment without a frontend payment plan
+
+The React frontend can be deployed free on Cloudflare Pages. The included `frontend/public/_redirects` file keeps React Router routes such as `/properties`, `/projects` and `/dashboard` working after a page refresh.
+
+Cloudflare Pages settings:
+
+```text
+Root directory: frontend
+Build command: npm ci && npm run build
+Build output directory: dist
+```
+
+Add this Cloudflare Pages environment variable:
+
+```env
+VITE_API_URL=https://YOUR-BACKEND-DOMAIN.example.com
+```
+
+Then set the backend environment variable to the Cloudflare Pages URL:
+
+```env
+CLIENT_URL=https://YOUR-PROJECT.pages.dev
+```
+
+The backend remains an Express/Prisma Node service and cannot run on Cloudflare Pages as-is. It must be hosted on a Node-compatible service or VPS. If a provider asks for payment verification, do not select a paid plan; use a provider’s explicitly free instance where available, or use a no-cost server account that you control. Neon remains the external PostgreSQL database.
+
 ## Deploying the frontend
 
 Deploy `frontend/` to Vercel, Netlify, Cloudflare Pages or another static hosting service.
