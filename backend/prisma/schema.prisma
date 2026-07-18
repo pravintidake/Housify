@@ -1,0 +1,157 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  firstName     String
+  lastName      String
+  role          String         @default("AGENT")
+  isActive      Boolean        @default(true)
+  managerId     String?
+  manager       User?          @relation("TeamManager", fields: [managerId], references: [id])
+  teamMembers   User[]         @relation("TeamManager")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  refreshTokens RefreshToken[]
+  leads         Lead[]
+  notifications Notification[]
+  customers     Customer[]
+  tasks         Task[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Property {
+  id            String    @id @default(uuid())
+  title         String
+  slug          String    @unique
+  description   String
+  price         Float
+  type          String    // RESIDENTIAL, COMMERCIAL, RENTAL, PLOT, PROJECTS
+  status        String    // AVAILABLE, SOLD, RENTED
+  address       String
+  city          String
+  area          String
+  bedrooms      Int       @default(0)
+  bathrooms     Int       @default(0)
+  sqft          Float     @default(0)
+  images        String    // JSON string array or comma-separated
+  amenities     String    // Comma-separated or JSON array
+  ownerName     String?
+  ownerPhone    String?
+  brokerName    String?
+  brokerPhone   String?
+  googleMapsUrl String?
+  isFeatured    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  leads         Lead[]
+  inquiries     Inquiry[]
+  customers     Customer[]
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  status      String   // ONGOING, UPCOMING, COMPLETED
+  location    String
+  image       String?
+  createdAt   DateTime @default(now())
+}
+
+model Inquiry {
+  id            String    @id @default(uuid())
+  name          String
+  email         String
+  phone         String
+  message       String?
+  budget        Float?
+  preferredDate String?
+  preferredTime String?
+  source        String    @default("Website") // Website, Contact Page
+  propertyId    String?
+  property      Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+}
+
+model Lead {
+  id              String     @id @default(uuid())
+  name            String
+  email           String
+  phone           String
+  source          String     // Website, Contact Page
+  status          String     @default("New Inquiry")
+  assignedAgentId String?
+  assignedAgent   User?      @relation(fields: [assignedAgentId], references: [id])
+  propertyId      String?
+  property        Property?  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  activities      Activity[]
+  tasks           Task[]
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  budget    Float?
+  timeline  String?
+  assignedAgentId String?
+  assignedAgent   User? @relation(fields: [assignedAgentId], references: [id])
+  propertyId String?
+  property Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id        String   @id @default(uuid())
+  title     String
+  type      String   @default("FOLLOW_UP") // FOLLOW_UP, MEETING, SITE_VISIT
+  dueAt     DateTime
+  completed Boolean  @default(false)
+  notes     String?
+  leadId    String?
+  lead      Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Activity {
+  id        String   @id @default(uuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String?  // Target user, null for all admins
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@theme {
+  --color-accent: #32FF7E;
+  --color-accent-dark: #00E676;
+  --color-accent-light: #E8FFE9;
+  --color-secondary: #F8FAFC;
+  --radius-premium: 18px;
+  --font-sans: 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --shadow-soft: 0 4px 30px rgba(0, 0, 0, 0.03);
+  --shadow-premium: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+}
+
+/* Global Custom Styles */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: #FFFFFF;
+    color: #0F172A;
+  }
+}
+
+/* Glassmorphism & Custom Accents */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(241, 245, 249, 0.8);
+}
+
+.premium-card {
+  background: #FFFFFF;
+  border-radius: var(--radius-premium);
+  border: 1px solid #F1F5F9;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-card:hover {
+  box-shadow: var(--shadow-premium);
+  transform: translateY(-2px);
+}
+
+.premium-input {
+  border-radius: var(--radius-premium);
+  border: 1px solid #E2E8F0;
+  transition: all 0.2s ease-in-out;
+}
+
+.premium-input:focus {
+  outline: none;
+  border-color: var(--color-accent-dark);
+  box-shadow: 0 0 0 3px rgba(50, 255, 126, 0.15);
+}
+
+.premium-btn-primary {
+  background-color: var(--color-accent);
+  color: #0F172A;
+  font-weight: 600;
+  border-radius: var(--radius-premium);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px 0 rgba(50, 255, 126, 0.4);
+}
+
+.premium-btn-primary:hover {
+  background-color: var(--color-accent-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px 0 rgba(0, 230, 118, 0.5);
+}
+
+.premium-btn-secondary {
+  background-color: var(--color-secondary);
+  color: #334155;
+  font-weight: 500;
+  border-radius: var(--radius-premium);
+  border: 1px solid #E2E8F0;
+  transition: all 0.2s ease;
+}
+
+.premium-btn-secondary:hover {
+  background-color: #F1F5F9;
+  border-color: #CBD5E1;
+}
+
+/* Custom Scrollbar for Sleek Layouts */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E2E8F0;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #CBD5E1;
+}

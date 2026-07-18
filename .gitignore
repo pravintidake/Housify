@@ -1,0 +1,26 @@
+# Dependencies and builds
+node_modules/
+frontend/dist/
+backend/dist/
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+
+# Runtime files
+backend/logs/
+*.log
+*.pid
+
+# Local databases and Prisma artifacts
+backend/prisma/*.db
+backend/prisma/*.db-journal
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,12 @@
+import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import api from '../services/api.ts'
+
+const Customers: React.FC = () => {
+  const [customers, setCustomers] = useState<any[]>([])
+  const load = async () => { try { const { data } = await api.get('/api/crm/customers'); setCustomers(data) } catch { toast.error('Unable to load customers.') } }
+  useEffect(() => { void load() }, [])
+  const add = async () => { const name = window.prompt('Customer name'); if (!name) return; const phone = window.prompt('Mobile number') || ''; const email = window.prompt('Email address') || ''; try { await api.post('/api/crm/customers', { name, phone, email }); toast.success('Customer added.'); load() } catch (error: any) { toast.error(error.response?.data?.message || 'Unable to add customer.') } }
+  return <div className="space-y-6"><div className="flex items-start justify-between"><div><h1 className="text-2xl font-bold text-slate-900">Customers</h1><p className="mt-1 text-sm text-slate-500">Converted leads and active customers assigned to you or your team.</p></div><button onClick={add} className="premium-btn-primary px-4 py-2 text-sm">Add customer</button></div><div className="premium-card overflow-x-auto"><table className="w-full min-w-[650px] text-left text-sm"><thead className="border-b border-slate-100 bg-slate-50 text-xs text-slate-500"><tr><th className="p-4">Customer</th><th className="p-4">Contact</th><th className="p-4">Budget</th><th className="p-4">Timeline</th><th className="p-4">Owner</th></tr></thead><tbody>{customers.map(customer => <tr key={customer.id} className="border-b border-slate-50"><td className="p-4 font-semibold text-slate-800">{customer.name}</td><td className="p-4 text-slate-500">{customer.phone}<br />{customer.email}</td><td className="p-4 text-slate-600">{customer.budget ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(customer.budget) : '—'}</td><td className="p-4 text-slate-500">{customer.timeline || '—'}</td><td className="p-4 text-slate-500">{customer.assignedAgent ? `${customer.assignedAgent.firstName} ${customer.assignedAgent.lastName}` : 'Unassigned'}</td></tr>)}{!customers.length && <tr><td colSpan={5} className="p-10 text-center text-slate-400">No customers are available for your account.</td></tr>}</tbody></table></div></div>
+}
+export default Customers
