@@ -134,6 +134,21 @@ Start:  npm start
 
 Do not place production values in `docker-compose.yml`, source files or README files.
 
+## Single-service deployment (frontend and backend together)
+
+The repository also includes `render.yaml` for deploying the React frontend and Express backend as one Render Web Service. In this mode, the frontend is built during deployment and Express serves `frontend/dist` while `/api/*` remains the backend API.
+
+Create the service from the repository blueprint, then add these secret environment variables in Render:
+
+```env
+DATABASE_URL=your-neon-postgresql-url
+JWT_SECRET=long-random-secret
+JWT_REFRESH_SECRET=another-long-random-secret
+CLIENT_URL=https://your-service.onrender.com
+```
+
+For this layout, leave `VITE_API_URL` empty or unset. The browser uses the same origin for both the website and API. The Render free Web Service may sleep after 15 minutes of inactivity, so the first request after idle can be slow.
+
 ## Deploying the frontend
 
 Deploy `frontend/` to Vercel, Netlify, Cloudflare Pages or another static hosting service.

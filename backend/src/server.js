@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
@@ -32,6 +33,17 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api', publicRoutes);
 app.use('/api/crm', crmRoutes);
+
+// In the single-service production deployment, Express serves the Vite build.
+// API routes above remain available under /api; all other browser routes go to React.
+if (process.env.NODE_ENV === 'production') {
+  const frontendDist = path.resolve(__dirname, '../../frontend/dist');
+  app.use(express.static(frontendDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path === '/health') return next();
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
 
 // Health Check route
 app.get('/health', (req, res) => {

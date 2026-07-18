@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: housify
+    runtime: node
+    buildCommand: npm --prefix backend ci --omit=dev && npm --prefix frontend ci && npm --prefix frontend run build && npm --prefix backend exec prisma generate && npm --prefix backend exec prisma migrate deploy
+    startCommand: npm --prefix backend start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: CLIENT_URL
+        sync: false
